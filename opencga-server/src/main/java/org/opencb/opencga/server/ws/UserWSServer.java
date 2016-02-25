@@ -21,7 +21,6 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import org.opencb.datastore.core.ObjectMap;
 import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.catalog.exceptions.CatalogException;
 import org.opencb.opencga.core.exception.VersionException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -199,6 +198,14 @@ public class UserWSServer extends OpenCGAWSServer {
         } catch (Exception e) {
             return createErrorResponse(e);
         }
+    }
+
+
+    @OPTIONS
+    @Path("/{userId}/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateUserOptions() {
+        return createOkResponse("options");
     }
 
     @POST

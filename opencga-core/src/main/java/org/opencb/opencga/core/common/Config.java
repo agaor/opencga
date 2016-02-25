@@ -35,7 +35,7 @@ public class Config {
     public static final String STORAGE_PROPERTIES = "storage.properties";
     protected static Logger logger = LoggerFactory.getLogger(Config.class);
 
-    private static String opencgaHome = System.getenv("OPENCGA_HOME");
+    private static String opencgaHome;
 //    private static String opencgaLightHome;
     private static boolean log4jReady = false;
 

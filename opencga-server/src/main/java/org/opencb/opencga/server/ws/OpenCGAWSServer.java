@@ -116,10 +116,12 @@ public class OpenCGAWSServer {
 
         Properties properties = new Properties();
         try {
+
             if(Config.getOpenCGAHome() == null || Config.getOpenCGAHome().isEmpty()) {
                 InputStream is = OpenCGAWSServer.class.getClassLoader().getResourceAsStream("application.properties");
                 properties.load(is);
                 String openCGAHome = properties.getProperty("OPENCGA.INSTALLATION.DIR", Config.getOpenCGAHome());
+                System.out.println("properties = " + properties);
                 System.out.println("OpenCGA home set to: " + openCGAHome);
                 Config.setOpenCGAHome(openCGAHome);
             } else {

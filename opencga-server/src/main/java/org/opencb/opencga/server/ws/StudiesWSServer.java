@@ -76,6 +76,14 @@ public class StudiesWSServer extends OpenCGAWSServer {
         }
     }
 
+
+    @OPTIONS
+    @Path("/create")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createStudyOptions() {
+        return createOkResponse("options");
+    }
+
     @POST
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
