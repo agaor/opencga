@@ -842,6 +842,12 @@ public class VariantMongoDBAdaptor implements VariantDBAdaptor {
                         DBObjectToVariantAnnotationConverter.CONSERVED_REGION_SCORE_FIELD, value, builder);
             }
 
+            if (query.containsKey(VariantQueryParams.FUNCTIONAL.key())) {
+                String value = query.getString(VariantQueryParams.FUNCTIONAL.key());
+                addScoreFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
+                        DBObjectToVariantAnnotationConverter.FUNCTIONAL_SCORE_FIELD, value, builder);
+            }
+
             if (query.containsKey(VariantQueryParams.ALTERNATE_FREQUENCY.key())) {
                 String value = query.getString(VariantQueryParams.ALTERNATE_FREQUENCY.key());
                 addFrequencyFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
@@ -1709,6 +1715,42 @@ public class VariantMongoDBAdaptor implements VariantDBAdaptor {
         }
         return builder;
     }
+//
+//    /**
+//     * Accepts a list of filters separated with "," or ";" with the expression:
+//     *      {SCORE}{OPERATION}{VALUE}
+//     *
+//     * @param key                   ProteinScore schema field
+//     * @param value                 Value to parse
+//     * @param builder               QueryBuilder
+//     * @return                      QueryBuilder
+//     */
+//    private QueryBuilder addFunctionalFilter(String key, String value, QueryBuilder builder) {
+//        final List<String> list;
+//        QueryOperation operation = checkOperator(value);
+//        list = splitValue(value, operation);
+//
+//        List<DBObject> dbObjects = new ArrayList<>();
+//        for (String elem : list) {
+//            String[] score = splitKeyValue(elem);
+//            if (score.length != 2) {
+//                logger.error("Bad score filter: " + elem);
+//                throw new IllegalArgumentException("Bad score filter: " + elem);
+//            }
+//            QueryBuilder functionalBuilder = new QueryBuilder();
+//            functionalBuilder.and(DBObjectToVariantAnnotationConverter.SCORE_SOURCE_FIELD).is(score[0]);
+//            addCompQueryFilter(DBObjectToVariantAnnotationConverter.SCORE_SCORE_FIELD, score[1], functionalBuilder);
+//            dbObjects.add(new BasicDBObject(key, new BasicDBObject("$elemMatch", functionalBuilder.get())));
+//        }
+//        if (!dbObjects.isEmpty()) {
+//            if (operation == null || operation == QueryOperation.AND) {
+//                builder.and(dbObjects.toArray(new DBObject[dbObjects.size()]));
+//            } else {
+//                builder.and(new BasicDBObject("$or", dbObjects));
+//            }
+//        }
+//        return builder;
+//    }
 
     /**
      * Accepts a list of filters separated with "," or ";" with the expression:
@@ -2220,6 +2262,13 @@ public class VariantMongoDBAdaptor implements VariantDBAdaptor {
                 addScoreFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.CONSERVED_REGION_SCORE_FIELD, list, builder);
                 options.put(VariantQueryParams.CONSERVATION.key(), list); //Replace the QueryOption without the malformed query params
+            }
+
+            if (options.containsKey(VariantQueryParams.FUNCTIONAL.key())) {
+                List<String> list = new ArrayList<>(options.getAsStringList(VariantQueryParams.FUNCTIONAL.key()));
+                addScoreFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
+                        DBObjectToVariantAnnotationConverter.FUNCTIONAL_SCORE_FIELD, list, builder);
+                options.put(VariantQueryParams.FUNCTIONAL.key(), list); //Replace the QueryOption without the malformed query params
             }
 
             if (options.containsKey(VariantQueryParams.ALTERNATE_FREQUENCY.key())) {

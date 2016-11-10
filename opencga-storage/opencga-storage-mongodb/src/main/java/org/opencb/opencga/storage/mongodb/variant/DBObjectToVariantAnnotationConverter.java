@@ -78,8 +78,10 @@ public class DBObjectToVariantAnnotationConverter implements ComplexTypeConverte
     public final static String SCORE_SCORE_FIELD = "sc";
     public final static String SCORE_SOURCE_FIELD = "src";
     public final static String SCORE_DESCRIPTION_FIELD = "desc";
-
     public static final String CLINICAL_DATA_FIELD = "clinical";
+
+    public static final String FUNCTIONAL_SCORE_FIELD = "f_score";
+
     public static final String COSMIC_FIELD = "cosmic";
     public static final String GWAS_FIELD = "gwas";
     public static final String CLINVAR_FIELD = "clinvar";
@@ -182,6 +184,20 @@ public class DBObjectToVariantAnnotationConverter implements ComplexTypeConverte
             }
         }
         va.setConservation(conservedRegionScores);
+
+        //Functional Scores
+        List<Score> functionalScores = new LinkedList<>();
+        if(object.containsField(FUNCTIONAL_SCORE_FIELD)) {
+            List<DBObject> list = (List) object.get(FUNCTIONAL_SCORE_FIELD);
+            for (DBObject dbObject : list) {
+                functionalScores.add(new Score(
+                        getDefault(dbObject, SCORE_SCORE_FIELD, 0.0),
+                        getDefault(dbObject, SCORE_SOURCE_FIELD, ""),
+                        getDefault(dbObject, SCORE_DESCRIPTION_FIELD, "")
+                ));
+            }
+        }
+        va.setFunctionalScore(functionalScores);
 
         //Population frequencies
         List<PopulationFrequency> populationFrequencies = new LinkedList<>();
@@ -384,6 +400,17 @@ public class DBObjectToVariantAnnotationConverter implements ComplexTypeConverte
                 }
             }
             putNotNull(dbObject, CONSERVED_REGION_SCORE_FIELD, conservedRegionScores);
+        }
+
+        //Functional score
+        if (variantAnnotation.getFunctionalScore() != null) {
+            List<DBObject> functionalScores = new LinkedList<>();
+            for (Score score : variantAnnotation.getFunctionalScore()) {
+                if (score != null) {
+                    functionalScores.add(convertScoreToStorage(score));
+                }
+            }
+            putNotNull(dbObject, FUNCTIONAL_SCORE_FIELD, functionalScores);
         }
 
         //Population frequencies
