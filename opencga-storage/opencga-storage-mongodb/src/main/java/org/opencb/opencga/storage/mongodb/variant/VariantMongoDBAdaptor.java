@@ -848,6 +848,28 @@ public class VariantMongoDBAdaptor implements VariantDBAdaptor {
                         DBObjectToVariantAnnotationConverter.FUNCTIONAL_SCORE_FIELD, value, builder);
             }
 
+            QueryBuilder geneTraitBuilder = QueryBuilder.start();
+            if (query.containsKey(VariantQueryParams.ANNOT_GENE_TRAITS_ID.key())) {
+                String value = query.getString(VariantQueryParams.ANNOT_GENE_TRAITS_ID.key());
+                addQueryStringFilter(DBObjectToVariantAnnotationConverter.GENE_TRAIT_ID_FIELD, value, geneTraitBuilder, QueryOperation.AND);
+            }
+
+            if (query.containsKey(VariantQueryParams.ANNOT_GENE_TRAITS_NAME.key())) {
+                String value = query.getString(VariantQueryParams.ANNOT_GENE_TRAITS_NAME.key());
+                addCompQueryFilter(DBObjectToVariantAnnotationConverter.GENE_TRAIT_NAME_FIELD, value, geneTraitBuilder);
+            }
+
+            if (query.containsKey(VariantQueryParams.HPO.key())) {
+                String value = query.getString(VariantQueryParams.HPO.key());
+                addQueryStringFilter(DBObjectToVariantAnnotationConverter.GENE_TRAIT_HPO_FIELD, value, geneTraitBuilder, QueryOperation.AND);
+            }
+
+            DBObject geneTraitQuery = geneTraitBuilder.get();
+            if (geneTraitQuery.keySet().size() != 0) {
+                builder.and(DBObjectToVariantConverter.ANNOTATION_FIELD
+                        + "." + DBObjectToVariantAnnotationConverter.GENE_TRAIT_FIELD).elemMatch(geneTraitQuery);
+            }
+
             if (query.containsKey(VariantQueryParams.ALTERNATE_FREQUENCY.key())) {
                 String value = query.getString(VariantQueryParams.ALTERNATE_FREQUENCY.key());
                 addFrequencyFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
@@ -2269,6 +2291,13 @@ public class VariantMongoDBAdaptor implements VariantDBAdaptor {
                 addScoreFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.FUNCTIONAL_SCORE_FIELD, list, builder);
                 options.put(VariantQueryParams.FUNCTIONAL.key(), list); //Replace the QueryOption without the malformed query params
+            }
+
+            if (options.containsKey(VariantQueryParams.HPO.key())) {
+                List<String> list = new ArrayList<>(options.getAsStringList(VariantQueryParams.HPO.key()));
+                addScoreFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
+                        DBObjectToVariantAnnotationConverter.GENE_TRAIT_HPO_FIELD, list, builder);
+                options.put(VariantQueryParams.HPO.key(), list); //Replace the QueryOption without the malformed query params
             }
 
             if (options.containsKey(VariantQueryParams.ALTERNATE_FREQUENCY.key())) {
