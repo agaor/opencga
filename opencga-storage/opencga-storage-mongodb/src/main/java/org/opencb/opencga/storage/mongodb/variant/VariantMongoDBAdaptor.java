@@ -1698,7 +1698,7 @@ public class VariantMongoDBAdaptor implements VariantDBAdaptor {
 
     private String getOperator(String value) {
         String op = value.substring(0, 2);
-        op = op.replaceFirst("[0-9]", "");
+        op = op.replaceFirst("-", "").replaceFirst("[0-9]", "");
         return op;
     }
 
