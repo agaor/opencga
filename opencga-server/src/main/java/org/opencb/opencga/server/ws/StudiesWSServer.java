@@ -255,6 +255,7 @@ public class StudiesWSServer extends OpenCGAWSServer {
                                 @ApiParam(value = "List of gene trait association names. e.g. \"Cardiovascular Diseases\"") @QueryParam("annot-gene-trait-name") String geneTraitName,
                                 @ApiParam(value = "List of HPO terms. e.g. \"HP:0000545\"") @QueryParam("hpo") String hpo,
                                 @ApiParam(value = "List of GO (Genome Ontology) terms. e.g. \"GO:0002020\"") @QueryParam("go") String go,
+                                @ApiParam(value = "List of diseases (from clinvar,cosmic,gwas)") @QueryParam("clinical-data") String diseases,
                                 @ApiParam(value = "Returned genotype for unknown genotypes. Common values: [0/0, 0|0, ./.]") @QueryParam("unknownGenotype") String unknownGenotype,
                                 @ApiParam(value = "Limit the number of returned variants. Max value: " + VariantFetcher.LIMIT_MAX) @DefaultValue(""+VariantFetcher.LIMIT_DEFAULT) @QueryParam("limit") int limit,
                                 @ApiParam(value = "Skip some number of variants.") @QueryParam("skip") int skip,

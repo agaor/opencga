@@ -90,8 +90,10 @@ public class DBObjectToVariantAnnotationConverter implements ComplexTypeConverte
     public static final String GENE_TRAIT_SOURCE_FIELD = "src";
 
     public static final String COSMIC_FIELD = "cosmic";
+    public static final String COSMIC_PRIMARY_FIELD = "primaryHistology";
     public static final String GWAS_FIELD = "gwas";
     public static final String CLINVAR_FIELD = "clinvar";
+    public static final String CLINVAR_TRAITS_FIELD = "traits";
 
     public static final String DEFAULT_STRAND_VALUE = "+";
 

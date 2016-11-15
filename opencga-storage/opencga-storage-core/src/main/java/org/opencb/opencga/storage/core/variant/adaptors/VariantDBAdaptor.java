@@ -78,6 +78,7 @@ public interface VariantDBAdaptor extends Iterable<Variant> {
                 "List of gene trait association names. e.g. \"Cardiovascular Diseases\""),
         HPO("hpo", TEXT_ARRAY, "List of HPO terms. e.g. \"HP:0000545\""),
         GO("go", TEXT_ARRAY, "List of GO (Genome Ontology) terms. e.g. \"GO:0002020\""),
+        CLINICAL_DATA("clinical-data", TEXT_ARRAY, "List of diseases"),
         POPULATION_MINOR_ALLELE_FREQUENCY ("annot-population-maf", TEXT_ARRAY, "Population minor allele frequency: {study}:{population}[<|>|<=|>=]{number}"),
         ALTERNATE_FREQUENCY ("alternate_frequency", TEXT_ARRAY, ""),
         REFERENCE_FREQUENCY ("reference_frequency", TEXT_ARRAY, ""),
