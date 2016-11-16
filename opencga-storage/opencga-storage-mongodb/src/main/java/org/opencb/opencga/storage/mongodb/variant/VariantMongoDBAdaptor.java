@@ -869,10 +869,16 @@ public class VariantMongoDBAdaptor implements VariantDBAdaptor {
                         DBObjectToVariantAnnotationConverter.CLINICAL_DATA_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.CLINVAR_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.CLINVAR_TRAITS_FIELD , value, builder, QueryOperation.OR);
+                //TODO TRAITS_FIELD in CLINVAR is an array
                 addQueryStringFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.CLINICAL_DATA_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.COSMIC_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.COSMIC_PRIMARY_FIELD , value, builder, QueryOperation.OR);
+                //TODO GWAS
+//                addQueryStringFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
+//                        DBObjectToVariantAnnotationConverter.CLINICAL_DATA_FIELD + "." +
+//                        DBObjectToVariantAnnotationConverter.GWAS_FIELD, value, builder, QueryOperation.OR);
+
 
             }
 
