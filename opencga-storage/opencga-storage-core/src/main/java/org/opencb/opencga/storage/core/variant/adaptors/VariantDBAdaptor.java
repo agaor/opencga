@@ -71,6 +71,13 @@ public interface VariantDBAdaptor extends Iterable<Variant> {
         @Deprecated
         PROTEIN_SUBSTITUTION ("protein_substitution", TEXT_ARRAY, ""),
         CONSERVATION("conservation", TEXT_ARRAY, ""),
+        FUNCTIONAL("functional", TEXT_ARRAY, ""),
+        ANNOT_GENE_TRAITS_ID("annot-gene-trait-id", TEXT_ARRAY,
+                "List of gene trait association id. e.g. \"umls:C0007222\" , \"OMIM:269600\""),
+        ANNOT_GENE_TRAITS_NAME("annot-gene-trait-name", TEXT_ARRAY,
+                "List of gene trait association names. e.g. \"Cardiovascular Diseases\""),
+        HPO("hpo", TEXT_ARRAY, "List of HPO terms. e.g. \"HP:0000545\""),
+        GO("go", TEXT_ARRAY, "List of GO (Genome Ontology) terms. e.g. \"GO:0002020\""),
         POPULATION_MINOR_ALLELE_FREQUENCY ("annot-population-maf", TEXT_ARRAY, "Population minor allele frequency: {study}:{population}[<|>|<=|>=]{number}"),
         ALTERNATE_FREQUENCY ("alternate_frequency", TEXT_ARRAY, ""),
         REFERENCE_FREQUENCY ("reference_frequency", TEXT_ARRAY, ""),
