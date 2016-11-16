@@ -78,8 +78,17 @@ public class DBObjectToVariantAnnotationConverter implements ComplexTypeConverte
     public final static String SCORE_SCORE_FIELD = "sc";
     public final static String SCORE_SOURCE_FIELD = "src";
     public final static String SCORE_DESCRIPTION_FIELD = "desc";
-
     public static final String CLINICAL_DATA_FIELD = "clinical";
+
+    public static final String FUNCTIONAL_SCORE_FIELD = "f_score";
+    public static final String GENE_TRAIT_FIELD = "gn_trait";
+    public static final String GENE_TRAIT_ID_FIELD = "id";
+    public static final String GENE_TRAIT_NAME_FIELD = "name";
+    public static final String GENE_TRAIT_HPO_FIELD = "hpo";
+    public static final String GENE_TRAIT_SCORE_FIELD = "sc";
+    public static final String GENE_TRAIT_TYPES_FIELD = "types";
+    public static final String GENE_TRAIT_SOURCE_FIELD = "src";
+
     public static final String COSMIC_FIELD = "cosmic";
     public static final String GWAS_FIELD = "gwas";
     public static final String CLINVAR_FIELD = "clinvar";
@@ -182,6 +191,39 @@ public class DBObjectToVariantAnnotationConverter implements ComplexTypeConverte
             }
         }
         va.setConservation(conservedRegionScores);
+
+        //Functional Scores
+        List<Score> functionalScores = new LinkedList<>();
+        if(object.containsField(FUNCTIONAL_SCORE_FIELD)) {
+            List<DBObject> list = (List) object.get(FUNCTIONAL_SCORE_FIELD);
+            for (DBObject dbObject : list) {
+                functionalScores.add(new Score(
+                        getDefault(dbObject, SCORE_SCORE_FIELD, 0.0),
+                        getDefault(dbObject, SCORE_SOURCE_FIELD, ""),
+                        getDefault(dbObject, SCORE_DESCRIPTION_FIELD, "")
+                ));
+            }
+        }
+        va.setFunctionalScore(functionalScores);
+
+        //HPO
+        List<GeneTraitAssociation> hpo = new LinkedList<>();
+        if(object.containsField(GENE_TRAIT_FIELD)) {
+            List<DBObject> list = (List) object.get(GENE_TRAIT_FIELD);
+            for (DBObject dbObject : list) {
+                hpo.add(new GeneTraitAssociation(
+                        getDefault(dbObject,GENE_TRAIT_ID_FIELD,""),
+                        getDefault(dbObject,GENE_TRAIT_NAME_FIELD,""),
+                        getDefault(dbObject,GENE_TRAIT_HPO_FIELD,""),
+                        (float)getDefault(dbObject, GENE_TRAIT_SCORE_FIELD, 0F),
+                        0,
+                        Collections.emptyList(),
+                        Collections.emptyList(),
+                        getDefault(dbObject, GENE_TRAIT_SOURCE_FIELD, "")
+                ));
+            }
+        }
+        va.setGeneTraitAssociation(hpo);
 
         //Population frequencies
         List<PopulationFrequency> populationFrequencies = new LinkedList<>();
@@ -384,6 +426,36 @@ public class DBObjectToVariantAnnotationConverter implements ComplexTypeConverte
                 }
             }
             putNotNull(dbObject, CONSERVED_REGION_SCORE_FIELD, conservedRegionScores);
+        }
+
+        //Functional score
+        if (variantAnnotation.getFunctionalScore() != null) {
+            List<DBObject> functionalScores = new LinkedList<>();
+            for (Score score : variantAnnotation.getFunctionalScore()) {
+                if (score != null) {
+                    functionalScores.add(convertScoreToStorage(score));
+                }
+            }
+            putNotNull(dbObject, FUNCTIONAL_SCORE_FIELD, functionalScores);
+        }
+
+        //HPO
+        if (variantAnnotation.getGeneTraitAssociation() != null) {
+            List<DBObject> hpo = new LinkedList<>();
+            for (GeneTraitAssociation geneTraitAssociation : variantAnnotation.getGeneTraitAssociation()) {
+                if (geneTraitAssociation != null) {
+                    DBObject d = new BasicDBObject();
+                    putNotNull(d, GENE_TRAIT_ID_FIELD, geneTraitAssociation.getId());
+                    putNotNull(d, GENE_TRAIT_NAME_FIELD, geneTraitAssociation.getName());
+                    putNotNull(d, GENE_TRAIT_SCORE_FIELD, geneTraitAssociation.getScore());
+                    putNotNull(d, GENE_TRAIT_HPO_FIELD, geneTraitAssociation.getHpo());
+                    putNotNull(d, GENE_TRAIT_TYPES_FIELD, geneTraitAssociation.getAssociationTypes());
+                    putNotNull(d, GENE_TRAIT_SOURCE_FIELD, geneTraitAssociation.getSource());
+
+                    hpo.add(d);
+                }
+            }
+            putNotNull(dbObject, GENE_TRAIT_FIELD, hpo);
         }
 
         //Population frequencies
