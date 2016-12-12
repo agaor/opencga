@@ -26,6 +26,8 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import org.apache.avro.generic.GenericRecord;
+import org.babelomics.biodb.lib.models.Go;
+import org.babelomics.biodb.lib.io.BioDBQueryManager;
 import org.opencb.biodata.models.variant.annotation.ConsequenceTypeMappings;
 import org.opencb.biodata.models.variant.avro.*;
 import org.opencb.datastore.core.ComplexTypeConverter;
@@ -81,6 +83,7 @@ public class DBObjectToVariantAnnotationConverter implements ComplexTypeConverte
     public static final String CLINICAL_DATA_FIELD = "clinical";
 
     public static final String FUNCTIONAL_SCORE_FIELD = "f_score";
+    public static final String GO_FIELD = "go";
     public static final String GENE_TRAIT_FIELD = "gn_trait";
     public static final String GENE_TRAIT_ID_FIELD = "id";
     public static final String GENE_TRAIT_NAME_FIELD = "name";
@@ -88,6 +91,8 @@ public class DBObjectToVariantAnnotationConverter implements ComplexTypeConverte
     public static final String GENE_TRAIT_SCORE_FIELD = "sc";
     public static final String GENE_TRAIT_TYPES_FIELD = "types";
     public static final String GENE_TRAIT_SOURCE_FIELD = "src";
+
+
 
     public static final String COSMIC_FIELD = "cosmic";
     public static final String COSMIC_PRIMARY_FIELD = "primaryHistology";
@@ -226,6 +231,22 @@ public class DBObjectToVariantAnnotationConverter implements ComplexTypeConverte
             }
         }
         va.setGeneTraitAssociation(hpo);
+
+        //GO
+        //TODO traer los go de la DB
+        List<Score> gos = new LinkedList<>();
+        if(object.containsField(GO_FIELD)) {
+            List<DBObject> list = (List) object.get(GO_FIELD);
+            for (DBObject dbObject : list) {
+                gos.add(new Score(
+                        getDefault(dbObject, SCORE_SCORE_FIELD, 0.0),
+                        getDefault(dbObject, SCORE_SOURCE_FIELD, ""),
+                        getDefault(dbObject, SCORE_DESCRIPTION_FIELD, "")
+                ));
+            }
+        }
+//        System.out.println("gos = " + gos);
+//        va.setGO(gos);
 
         //Population frequencies
         List<PopulationFrequency> populationFrequencies = new LinkedList<>();
@@ -460,6 +481,31 @@ public class DBObjectToVariantAnnotationConverter implements ComplexTypeConverte
             putNotNull(dbObject, GENE_TRAIT_FIELD, hpo);
         }
 
+        //GO
+        //TODO Anotar los  Go en la DB
+        if (variantAnnotation.getConsequenceTypes() !=null) {
+            System.out.println("variantAnnotation.getConsequenceTypes() = " + variantAnnotation.getConsequenceTypes());
+            BioDBQueryManager qm = new BioDBQueryManager("mem18", "biodb");
+            List<String> genes = new ArrayList<>();
+            List<ConsequenceType> consequenceTypes = variantAnnotation.getConsequenceTypes();
+            for (ConsequenceType consequenceType : consequenceTypes) {
+                genes.add(consequenceType.getGeneName());
+            }
+            Iterable<Go> gos = qm.getFilteredGo(genes);
+            System.out.printf("-----------------------------------");
+            System.out.println("gos = " + gos);
+            if (gos != null) {
+                List<DBObject> gosList = new LinkedList<>();
+                for (Go score : gos) {
+                    if (score != null) {
+                        gosList.add(convertScoreToStorage(0, score.getId(), score.getName()));
+                    }
+                }
+                System.out.println("gosList = " + gosList);
+                putNotNull(dbObject, GO_FIELD, gosList);
+            }
+        }
+
         //Population frequencies
         if (variantAnnotation.getPopulationFrequencies() != null) {
             List<DBObject> populationFrequencies = new LinkedList<>();
@@ -565,6 +611,9 @@ public class DBObjectToVariantAnnotationConverter implements ComplexTypeConverte
     }
 
     private void putNotNull(DBObject dbObject, String key, Collection obj) {
+        System.out.println("dbObject = " + dbObject);
+        System.out.println("key = " + key);
+        System.out.println("obj = " + obj);
         if(obj != null && !obj.isEmpty()) {
             dbObject.put(key, obj);
         }

@@ -44,6 +44,7 @@
         <hpg-bigdata.version>0.6-SNAPSHOT</hpg-bigdata.version>
         <jackson.version>2.5.4</jackson.version>
         <jersey.version>2.19</jersey.version>
+        <biodb.version>0.1.0</biodb.version>
     </properties>
 
     <scm>
@@ -291,6 +292,17 @@
                 <version>4.12</version>
                 <scope>test</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.babelomics.biodb</groupId>
+                <artifactId>biodb-lib</artifactId>
+                <version>${biodb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.babelomics.biodb</groupId>
+                <artifactId>biodb-server</artifactId>
+                <version>${biodb.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -355,7 +367,8 @@
 
                 <OPENCGA.ANALYSIS.EXECUTION.MANAGER>LOCAL</OPENCGA.ANALYSIS.EXECUTION.MANAGER>
 
-                <OPENCGA.CELLBASE.HOST>http://bioinfodev.hpc.cam.ac.uk/cellbase/webservices/rest/</OPENCGA.CELLBASE.HOST>
+                <OPENCGA.CELLBASE.HOST>http://bioinfodev.hpc.cam.ac.uk/cellbase/webservices/rest/
+                </OPENCGA.CELLBASE.HOST>
                 <OPENCGA.CELLBASE.VERSION>v3</OPENCGA.CELLBASE.VERSION>
             </properties>
         </profile>

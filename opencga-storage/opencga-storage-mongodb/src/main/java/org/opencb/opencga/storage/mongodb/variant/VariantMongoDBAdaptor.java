@@ -863,21 +863,26 @@ public class VariantMongoDBAdaptor implements VariantDBAdaptor {
                 String value = query.getString(VariantQueryParams.HPO.key());
                 addQueryStringFilter(DBObjectToVariantAnnotationConverter.GENE_TRAIT_HPO_FIELD, value, geneTraitBuilder, QueryOperation.AND);
             }
+
+            if (query.containsKey(VariantQueryParams.GO.key())) {
+                String value = query.getString(VariantQueryParams.GO.key());
+                addQueryStringFilter(DBObjectToVariantAnnotationConverter.GO_FIELD, value, geneTraitBuilder, QueryOperation.AND);
+            }
+
+
             if (query.containsKey(VariantQueryParams.CLINICAL_DATA.key())) {
                 String value = query.getString(VariantQueryParams.CLINICAL_DATA.key());
                 addQueryStringFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.CLINICAL_DATA_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.CLINVAR_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.CLINVAR_TRAITS_FIELD , value, builder, QueryOperation.OR);
-                //TODO TRAITS_FIELD in CLINVAR is an array
                 addQueryStringFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.CLINICAL_DATA_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.COSMIC_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.COSMIC_PRIMARY_FIELD , value, builder, QueryOperation.OR);
-                //TODO GWAS
-//                addQueryStringFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
-//                        DBObjectToVariantAnnotationConverter.CLINICAL_DATA_FIELD + "." +
-//                        DBObjectToVariantAnnotationConverter.GWAS_FIELD, value, builder, QueryOperation.OR);
+                addQueryStringFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
+                        DBObjectToVariantAnnotationConverter.CLINICAL_DATA_FIELD + "." +
+                        DBObjectToVariantAnnotationConverter.GWAS_FIELD, value, builder, QueryOperation.OR);
 
 
             }
@@ -2316,6 +2321,12 @@ public class VariantMongoDBAdaptor implements VariantDBAdaptor {
                 addScoreFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
                         DBObjectToVariantAnnotationConverter.GENE_TRAIT_HPO_FIELD, list, builder);
                 options.put(VariantQueryParams.HPO.key(), list); //Replace the QueryOption without the malformed query params
+            }
+            if (options.containsKey(VariantQueryParams.GO.key())) {
+                List<String> list = new ArrayList<>(options.getAsStringList(VariantQueryParams.GO.key()));
+                addScoreFilter(DBObjectToVariantConverter.ANNOTATION_FIELD + "." +
+                        DBObjectToVariantAnnotationConverter.GO_FIELD, list, builder);
+                options.put(VariantQueryParams.GO.key(), list); //Replace the QueryOption without the malformed query params
             }
 
             if (options.containsKey(VariantQueryParams.CLINICAL_DATA.key())) {

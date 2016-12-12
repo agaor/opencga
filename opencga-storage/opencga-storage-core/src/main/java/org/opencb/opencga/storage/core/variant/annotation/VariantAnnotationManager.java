@@ -225,6 +225,7 @@ public class VariantAnnotationManager {
     public enum AnnotationSource {
         CELLBASE_DB_ADAPTOR,
         CELLBASE_REST,
+        BIODB,
         VEP,
         OTHER
     }
@@ -246,6 +247,8 @@ public class VariantAnnotationManager {
                 return new CellBaseVariantAnnotator(configuration, options, false);
             case CELLBASE_REST:
                 return new CellBaseVariantAnnotator(configuration, options, true);
+            case BIODB:
+                return new BioDBVariantAnnotator(configuration, options);
             case VEP:
                 return VepVariantAnnotator.buildVepAnnotator();
             case OTHER:

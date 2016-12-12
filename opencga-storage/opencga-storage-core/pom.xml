@@ -62,6 +62,11 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.babelomics.biodb</groupId>
+            <artifactId>biodb-lib</artifactId>
+            <version>${biodb.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
