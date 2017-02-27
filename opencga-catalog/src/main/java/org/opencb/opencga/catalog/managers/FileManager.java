@@ -2373,7 +2373,10 @@ public class FileManager extends AbstractManager implements IFileManager {
     public QueryResult index(String fileIdStr, String type, Map<String, String> params, String sessionId) throws CatalogException {
         String userId = userDBAdaptor.getUserIdBySessionId(sessionId);
         List<Long> fileFolderIdList = getIds(userId, fileIdStr);
-
+        System.out.println("filefolderIdList size:" + fileFolderIdList.size());
+        for (Long aLong : fileFolderIdList) {
+            System.out.println(aLong);
+        }
         long studyId = -1;
         // Check we can index all of them
         for (Long fileId : fileFolderIdList) {
@@ -2394,13 +2397,26 @@ public class FileManager extends AbstractManager implements IFileManager {
         if (outDirPath != null && !StringUtils.isNumeric(outDirPath) && outDirPath.contains("/") && !outDirPath.endsWith("/")) {
             outDirPath = outDirPath + "/";
         }
-        long outDirId = getId(userId, outDirPath);
+        long outDirId = -1;
+        try {
+
+            System.out.println("Antes del primer getId");
+            System.out.println("El userId es: " + userId);
+            System.out.println("outDirPath = " + outDirPath);
+            outDirId = getId(userId, outDirPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("He pasado el primer getId");
         if (outDirId > 0) {
+            System.out.println("Paso por el primer caso");
             authorizationManager.checkFilePermission(outDirId, userId, FileAclEntry.FilePermissions.CREATE);
             if (fileDBAdaptor.getStudyIdByFileId(outDirId) != studyId) {
                 throw new CatalogException("The output directory does not correspond to the same study of the files");
             }
         } else if (outDirPath != null) {
+            System.out.println("Paso por el segundo caso");
             ObjectMap parsedSampleStr = parseFeatureId(userId, outDirPath);
             String path = (String) parsedSampleStr.get("featureName");
             logger.info("Outdir {}", path);
@@ -2414,7 +2430,9 @@ public class FileManager extends AbstractManager implements IFileManager {
                 logger.info("Outdir {} -> {}", outDirId, path);
             }
         } else {
+            System.out.println("Paso por el tercer caso");
             if (fileFolderIdList.size() == 1) {
+                System.out.println("Paso por el tercer cso 1 caso");
                 // Leave the output files in the same directory
                 long fileId = fileFolderIdList.get(0);
                 QueryResult<File> file = fileDBAdaptor.get(fileId, new QueryOptions());
@@ -2426,6 +2444,7 @@ public class FileManager extends AbstractManager implements IFileManager {
                     }
                 }
             } else {
+                System.out.println("Paso por el tercer caso 2");
                 // Leave the output files in the root directory
                 outDirId = getId(userId, studyId + ":/");
                 logger.info("Getting out dir from {}:/", studyId);
@@ -2498,7 +2517,7 @@ public class FileManager extends AbstractManager implements IFileManager {
             logger.debug("Index bam files to do");
             jobQueryResult = new QueryResult<>();
         }
-
+        System.out.println("He terminado la funcion sin petar");
         return jobQueryResult;
     }
 

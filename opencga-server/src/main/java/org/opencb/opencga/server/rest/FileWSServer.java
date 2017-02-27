@@ -632,6 +632,12 @@ public class FileWSServer extends OpenCGAWSServer {
 
         try {
             List<String> fileIds = convertPathList(fileIdStr, sessionId);
+            System.out.print("FileIdStr:"+ fileIdStr);
+            System.out.println("size "+ fileIds.size());
+            for (String s: fileIds){
+                System.out.println("lista:"+ s);
+            }
+
             QueryResult queryResult = catalogManager.getFileManager().index(StringUtils.join(fileIds, ","), "VCF", params, sessionId);
             return createOkResponse(queryResult);
         } catch(Exception e) {
